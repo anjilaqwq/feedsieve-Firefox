@@ -46,6 +46,9 @@ jobs:
       - name: Build extension (wxt)
         run: pnpm build:extension
 
+      - name: Build Firefox extension (WXT MV3)
+        run: pnpm build:extension:firefox
+
       - name: Install Chromium for MV3 acceptance
         run: pnpm exec playwright install --with-deps chromium
 

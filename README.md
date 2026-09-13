@@ -2,7 +2,7 @@
   <img src="assets/brand/avatar.png" width="96" alt="福滤娃 FeedSieve" />
 </p>
 
-<h1 align="center">福滤娃 FeedSieve</h1>
+<h1 align="center">福滤娃 FeedSieve · Firefox 版</h1>
 
 <p align="center">
   <strong>不信你看。看不见就对了。</strong><br>
@@ -12,17 +12,17 @@
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/feedsieve/amhdjglnonjaoenddnifpnljgmocfdph"><img src="https://img.shields.io/chrome-web-store/v/amhdjglnonjaoenddnifpnljgmocfdph?logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store" alt="Chrome Web Store 版本" /></a>
   <a href="https://chromewebstore.google.com/detail/feedsieve/amhdjglnonjaoenddnifpnljgmocfdph"><img src="https://img.shields.io/chrome-web-store/users/amhdjglnonjaoenddnifpnljgmocfdph?label=users" alt="商店用户数" /></a>
-  <a href="https://github.com/realchendahuang/feedsieve/releases"><img src="https://img.shields.io/github/v/release/realchendahuang/feedsieve?logo=github" alt="最新 Release" /></a>
-  <a href="https://github.com/realchendahuang/feedsieve/stargazers"><img src="https://img.shields.io/github/stars/realchendahuang/feedsieve?logo=github" alt="GitHub Stars" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/realchendahuang/feedsieve" alt="MIT License" /></a>
-  <a href="https://github.com/realchendahuang/feedsieve/commits/main"><img src="https://img.shields.io/github/commit-activity/m/realchendahuang/feedsieve?label=commits" alt="提交活跃度" /></a>
+  <a href="https://github.com/anjilaqwq/feedsieve-Firefox/releases"><img src="https://img.shields.io/github/v/release/anjilaqwq/feedsieve-Firefox?logo=firefoxbrowser&label=Firefox" alt="Firefox 最新 Release" /></a>
+  <a href="https://github.com/anjilaqwq/feedsieve-Firefox/stargazers"><img src="https://img.shields.io/github/stars/anjilaqwq/feedsieve-Firefox?logo=github" alt="GitHub Stars" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/anjilaqwq/feedsieve-Firefox" alt="MIT License" /></a>
+  <a href="https://github.com/anjilaqwq/feedsieve-Firefox/commits/main"><img src="https://img.shields.io/github/commit-activity/m/anjilaqwq/feedsieve-Firefox?label=commits" alt="提交活跃度" /></a>
   <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome" /></a>
 </p>
 
 <p align="center">
-  <a href="https://chromewebstore.google.com/detail/feedsieve/amhdjglnonjaoenddnifpnljgmocfdph"><strong>⬇️ Chrome 应用商店安装</strong></a>
+  <a href="#安装"><strong>🦊 Firefox 安装</strong></a>
   ·
-  <a href="#安装">本地构建</a>
+  <a href="#firefox-版本说明">Firefox 修改</a>
   ·
   <a href="#使用教程">使用教程</a>
   ·
@@ -41,6 +41,20 @@
 
 > [!TIP]
 > **为什么是拉黑，而不是隐藏？** 本地隐藏只骗过你自己这一个浏览器；X 原生 Block 全端生效——手机同步消失，被拉黑的号再也无法回复你、@ 你、关注你。误伤也不怕，一键 Unblock 放回来。
+
+> [!IMPORTANT]
+> **AI 构建声明：**本仓库是由 **OpenAI Codex（AI）** 在[原版 FeedSieve](https://github.com/realchendahuang/feedsieve)源码基础上完成兼容修改、构建与测试的 Firefox 版本。原项目与核心功能归上游维护者；Firefox 专属修改及发布包保留在本仓库。
+
+## Firefox 版本说明
+
+当前发布：**v0.9.5-firefox**，面向 **Firefox 140 及以上版本**。
+
+- 保持 Manifest V3，与原版 Chrome 构建使用同一套核心功能代码。
+- 使用 Firefox 原生 `sidebar_action` / `browser.sidebarAction`，支持从弹窗切换到 Firefox 侧栏。
+- Firefox 构建移除 Chrome 专属 `sidePanel` 权限；Chrome 构建继续保留原有侧栏能力。
+- 增加 Firefox 专用的开发、构建和打包命令，并在 CI 中同时检查 Chrome 与 Firefox 产物。
+- 增加固定 Gecko 扩展 ID、最低版本和数据传输声明；名单上传仍可在扩展设置中关闭。
+- 增加 Firefox API 选择、侧栏打开和侧栏页面识别测试。
 
 ## 这是什么
 
@@ -61,9 +75,42 @@
 
 | 方式 | 步骤 |
 | --- | --- |
-| **Chrome 应用商店（推荐）** | 前往[商店页面](https://chromewebstore.google.com/detail/feedsieve/amhdjglnonjaoenddnifpnljgmocfdph)点「添加至 Chrome」，自动接收更新 |
-| **GitHub Releases** | 从 [Releases](https://github.com/realchendahuang/feedsieve/releases) 下载 `feedsieve-*-chrome.zip` 并解压 → 打开 `chrome://extensions` 开启「开发者模式」→「加载已解压的扩展程序」 |
-| **从源码构建** | `git clone https://github.com/realchendahuang/feedsieve.git && pnpm install && pnpm build:extension`，然后加载 `apps/extension/.output/chrome-mv3`（需要 Node ≥ 22 与 pnpm） |
+| **Firefox Release 包** | 从本仓库 [Releases](https://github.com/anjilaqwq/feedsieve-Firefox/releases) 下载 `feedsieve-*-firefox.zip` 并解压，按下方步骤临时载入 |
+| **Firefox 源码构建** | `pnpm install && pnpm build:extension:firefox`，产物位于 `apps/extension/.output/firefox-mv3`（需要 Node ≥ 22 与 pnpm） |
+| **Chrome 原版** | Chrome / Edge / Brave 用户推荐使用[上游 Chrome 应用商店版本](https://chromewebstore.google.com/detail/feedsieve/amhdjglnonjaoenddnifpnljgmocfdph) |
+
+### 在 Firefox 中载入
+
+1. 从 [Releases](https://github.com/anjilaqwq/feedsieve-Firefox/releases) 下载 `feedsieve-0.9.5-firefox.zip`。
+2. 将 ZIP 完整解压到一个不会被删除的目录。
+3. 在 Firefox 地址栏打开 `about:debugging#/runtime/this-firefox`。
+4. 点击「临时载入附加组件」。
+5. 选择解压目录内的 `manifest.json`。
+6. 打开 `x.com`，点击工具栏中的 FeedSieve 图标即可使用；弹窗右上角按钮可切换到 Firefox 侧栏。
+
+> [!NOTE]
+> GitHub Release 中的 ZIP 是未经过 Mozilla 签名的开源构建，只能通过 `about:debugging` 临时载入；关闭 Firefox 后需要重新载入。普通稳定版 Firefox 要永久安装，必须使用后续经 Mozilla Add-ons（AMO）签名的 `.xpi`。本仓库发布页当前不冒充 AMO 签名版本。
+
+### 从源码构建 Firefox 版
+
+```powershell
+git clone https://github.com/anjilaqwq/feedsieve-Firefox.git
+cd feedsieve-Firefox
+pnpm install
+pnpm build:extension:firefox
+```
+
+完成后按上面的临时载入步骤，选择：
+
+```text
+apps/extension/.output/firefox-mv3/manifest.json
+```
+
+生成 Firefox ZIP：
+
+```powershell
+pnpm --filter @feedsieve/extension zip:firefox
+```
 
 **Edge / Brave 等 Chromium 浏览器可直接装商店版**：Edge 打开商店页面时会提示「允许来自其他商店的扩展」，允许后点「添加至 Chrome」即可，无需单独上架 Edge Add-ons（也不用后两种方式）。
 
@@ -138,7 +185,7 @@ x.com
 
 - 完整版本历史：[CHANGELOG.md](CHANGELOG.md)
 - 各版本详细工程记录：[docs/RELEASES.md](docs/RELEASES.md)
-- 二进制产物：[GitHub Releases](https://github.com/realchendahuang/feedsieve/releases)
+- Firefox 二进制产物：[GitHub Releases](https://github.com/anjilaqwq/feedsieve-Firefox/releases)
 
 ## 路线图
 
@@ -154,8 +201,8 @@ x.com
 欢迎 Issue 反馈漏识别 / 误标，提交垃圾话术样本与规则建议，以及 X DOM 兼容修复、UI / UX 改进。
 
 ```sh
-git clone https://github.com/realchendahuang/feedsieve.git
-cd feedsieve
+git clone https://github.com/anjilaqwq/feedsieve-Firefox.git
+cd feedsieve-Firefox
 pnpm install
 git config core.hooksPath .githooks   # 启用 pre-push 本地质量门禁
 ```
@@ -180,6 +227,7 @@ PR 与 push 由 GitHub Actions 验证（`.github/workflows/verify.yml`：lint / 
 ```sh
 pnpm verify                 # lint + 词库校验 + typecheck + 全部测试 + 扩展构建
 pnpm build:extension        # 构建扩展，产物在 apps/extension/.output/chrome-mv3
+pnpm build:extension:firefox # 构建 Firefox，产物在 apps/extension/.output/firefox-mv3
 pnpm keyword-packs:build    # 由公开词库源构建官方词库 JSON
 ```
 
@@ -189,9 +237,9 @@ pnpm keyword-packs:build    # 由公开词库源构建官方词库 JSON
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=realchendahuang/feedsieve&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=realchendahuang/feedsieve&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=realchendahuang/feedsieve&type=Date" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=anjilaqwq/feedsieve-Firefox&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=anjilaqwq/feedsieve-Firefox&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=anjilaqwq/feedsieve-Firefox&type=Date" />
   </picture>
 </p>
 

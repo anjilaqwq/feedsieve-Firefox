@@ -16,6 +16,7 @@
 | **Chrome 应用商店（推荐）** | 前往[商店页面](https://chromewebstore.google.com/detail/feedsieve/amhdjglnonjaoenddnifpnljgmocfdph)点「添加至 Chrome」，自动接收更新 |
 | **GitHub Releases** | 从 [Releases](https://github.com/realchendahuang/feedsieve/releases) 下载 `feedsieve-*-chrome.zip` 解压 → `chrome://extensions` 开「开发者模式」→「加载已解压的扩展程序」 |
 | **从源码构建** | `pnpm install && pnpm build:extension`，加载 `apps/extension/.output/chrome-mv3`（Node ≥ 22，pnpm） |
+| **Firefox（源码构建）** | `pnpm install && pnpm build:extension:firefox` → `about:debugging#/runtime/this-firefox` →「临时载入附加组件」→ 选择 `apps/extension/.output/firefox-mv3/manifest.json` |
 
 Edge / Brave 等 Chromium 浏览器同样推荐直接用上方商店版：Edge 首次访问商店页面时允许「来自其他商店的扩展」即可安装，自动同步更新（无需单独上架 Edge Add-ons）。装好即用，无需注册任何账号。
 

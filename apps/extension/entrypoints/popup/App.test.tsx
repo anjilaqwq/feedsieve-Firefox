@@ -15,6 +15,8 @@ beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
   for (const root of mountedRoots.splice(0)) root.unmount();
   document.body.replaceChildren();
+  document.body.className = '';
+  window.history.replaceState({}, '', '/popup.html');
   storageSet = vi.fn().mockResolvedValue(undefined);
   runtimeSendMessage = vi.fn().mockResolvedValue({ status: 'up_to_date' });
   tabSendMessage = vi.fn().mockResolvedValue({ blocked: [], failed: [] });
@@ -161,6 +163,35 @@ async function chooseFile(input: HTMLInputElement, file: File): Promise<void> {
 }
 
 describe('popup App 渲染冒烟', () => {
+  it('recognizes the dedicated sidepanel entrypoint even in a short window', async () => {
+    window.history.replaceState({}, '', '/sidepanel.html');
+
+    const rootEl = renderApp();
+    await waitForCondition(() => document.body.classList.contains('mode-sidepanel'));
+
+    expect(document.body.classList.contains('mode-sidepanel')).toBe(true);
+    expect(rootEl.querySelector('.popup-header')).toBeNull();
+  });
+
+  it('opens the Firefox sidebar from the popup action', async () => {
+    const open = vi.fn().mockResolvedValue(undefined);
+    const firefoxBrowser = (
+      globalThis as unknown as {
+        browser: typeof browser & { sidebarAction?: { open: () => Promise<void> } };
+      }
+    ).browser;
+    firefoxBrowser.sidebarAction = { open };
+
+    const rootEl = renderApp();
+    await waitForCondition(() => Boolean(rootEl.querySelector('.sidepanel-toggle-btn')));
+
+    await act(async () => {
+      rootEl.querySelector<HTMLButtonElement>('.sidepanel-toggle-btn')?.click();
+    });
+
+    expect(open).toHaveBeenCalledOnce();
+  });
+
   it('automatically clears transient notices', async () => {
     vi.useFakeTimers();
     try {

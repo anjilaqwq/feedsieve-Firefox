@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
     "preview:popup": "vite --config vite.preview.config.mjs",
     "build": "node scripts/copy-runtime-data.mjs && wxt build",
+    "build:firefox": "node scripts/copy-runtime-data.mjs && wxt build -b firefox",
     "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
     "postinstall": "node scripts/copy-runtime-data.mjs && wxt prepare",
     "typecheck": "node scripts/copy-runtime-data.mjs && tsc --noEmit"
   },

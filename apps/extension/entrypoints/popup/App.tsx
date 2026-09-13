@@ -33,7 +33,7 @@ import HuntingView from './views/HuntingView';
 import {
   AppIcon,
   asPageMarkedList,
-  getChromeSidePanel,
+  getBrowserSidePanel,
   type PageMarkedItem,
 } from './views/shared';
 
@@ -57,6 +57,16 @@ function initialPopupView(): PopupView {
     default:
       return 'clean';
   }
+}
+
+function isSidePanelDocument(): boolean {
+  if (typeof window === 'undefined') return false;
+  return (
+    window.location.pathname.endsWith('/sidepanel.html') ||
+    window.location.search.includes('panel') ||
+    window.location.hash.includes('sidepanel') ||
+    window.innerHeight > 650
+  );
 }
 
 export default function App() {
@@ -232,24 +242,14 @@ export default function App() {
     return () => window.clearTimeout(timeout);
   }, [notice]);
 
-  const [isSidePanel, setIsSidePanel] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return (
-      window.location.search.includes('panel') ||
-      window.location.hash.includes('sidepanel') ||
-      window.innerHeight > 650
-    );
-  });
+  const [isSidePanel, setIsSidePanel] = useState(isSidePanelDocument);
 
-  const sidePanelApi = getChromeSidePanel();
-  const canOpenSidePanel = Boolean(sidePanelApi?.open);
+  const sidePanelApi = getBrowserSidePanel();
+  const canOpenSidePanel = Boolean(sidePanelApi);
 
   useEffect(() => {
     const syncMode = () => {
-      const isPanel =
-        window.location.search.includes('panel') ||
-        window.location.hash.includes('sidepanel') ||
-        window.innerHeight > 650;
+      const isPanel = isSidePanelDocument();
       setIsSidePanel(isPanel);
       if (isPanel) {
         document.body.classList.add('mode-sidepanel');
@@ -262,20 +262,24 @@ export default function App() {
     return () => window.removeEventListener('resize', syncMode);
   }, []);
 
-  // 弹窗 → 侧边栏。Chrome 152 实测：setOptions 不支持 windowId（同步 TypeError，
-  // 会拦死后续代码），只允许全局 {enabled, path}；setOptions 独立捕获，绝不让它拦住 open
+  // 弹窗 → 侧边栏。Chromium 使用 sidePanel，Firefox 使用 sidebarAction。
+  // Chrome 152 实测 setOptions 不支持 windowId，只允许全局 {enabled, path}。
   const handleOpenSidePanel = async () => {
-    const api = getChromeSidePanel();
-    if (!api?.open) return;
+    const sidePanel = getBrowserSidePanel();
+    if (!sidePanel) return;
     try {
-      const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-      if (!tab?.windowId) return;
-      try {
-        await api.setOptions?.({ enabled: true, path: 'popup.html' });
-      } catch {
-        // setOptions 兼容性差异不阻塞 open
+      if (sidePanel.browser === 'firefox') {
+        await sidePanel.api.open?.();
+      } else {
+        const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+        if (!tab?.windowId) return;
+        try {
+          await sidePanel.api.setOptions?.({ enabled: true, path: 'sidepanel.html' });
+        } catch {
+          // setOptions 兼容性差异不阻塞 open
+        }
+        await sidePanel.api.open?.({ windowId: tab.windowId });
       }
-      await api.open({ windowId: tab.windowId });
       window.close();
     } catch (err) {
       notify(`${t.sidePanelOpenFailed}：${err instanceof Error ? err.message : String(err)}`);

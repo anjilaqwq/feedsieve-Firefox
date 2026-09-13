@@ -315,7 +315,12 @@ export function normalizeManualInput(value: string): string | null {
   return /^[a-z0-9_]{1,15}$/.test(handle) ? handle : null;
 }
 
-export { getChromeSidePanel, type ChromeSidePanelApi } from '../../../src/lib/platform/sidepanel';
+export {
+  getBrowserSidePanel,
+  getChromeSidePanel,
+  type BrowserSidePanel,
+  type ChromeSidePanelApi,
+} from '../../../src/lib/platform/sidepanel';
 
 /**
  * 官网公示页图标入口：按 tab 对应官网同名公示页引流（黑名单/白名单/词库）。

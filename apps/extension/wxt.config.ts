@@ -16,29 +16,46 @@ function officialJsonPlugin() {
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
-  manifest: (env) => ({
-    name: 'FeedSieve',
-    short_name: 'FeedSieve',
-    description: 'X 赛博清洁工：黄框标注垃圾账号，一键批量真拉黑。标注永不隐藏内容。',
-    permissions: ['storage', 'sidePanel'],
-    side_panel: {
-      default_path: 'popup.html',
-    },
-    host_permissions: [
-      'https://x.com/*',
-      // dev 模式放行本地社区 API（wrangler dev）；生产构建不包含 localhost。
-      ...(env.mode === 'development' ? ['http://localhost/*'] : []),
-      // 社区名单下载 + 用户黑白名单同步（Cloudflare Worker，自部署见 apps/community-api）
-      'https://feedsieve-api.chendahuang.com/*',
-    ],
-    icons: {
-      16: '/icon-16.png',
-      32: '/icon-32.png',
-      48: '/icon-48.png',
-      64: '/icon.png',
-      128: '/icon-128.png',
-    },
-  }),
+  // Chrome 和 Firefox 都发布 MV3，避免 WXT 对 Firefox 默认回退到 MV2。
+  manifestVersion: 3,
+  manifest: (env) => {
+    const isFirefox = env.browser === 'firefox';
+    return {
+      name: 'FeedSieve',
+      short_name: 'FeedSieve',
+      description: 'X 赛博清洁工：黄框标注垃圾账号，一键批量真拉黑。标注永不隐藏内容。',
+      // sidePanel 是 Chromium 专属权限；Firefox 的 sidebar_action 不需要同名权限。
+      permissions: isFirefox ? ['storage'] : ['storage', 'sidePanel'],
+      host_permissions: [
+        'https://x.com/*',
+        // dev 模式放行本地社区 API（wrangler dev）；生产构建不包含 localhost。
+        ...(env.mode === 'development' ? ['http://localhost/*'] : []),
+        // 社区名单下载 + 用户黑白名单同步（Cloudflare Worker，自部署见 apps/community-api）
+        'https://feedsieve-api.chendahuang.com/*',
+      ],
+      icons: {
+        16: '/icon-16.png',
+        32: '/icon-32.png',
+        48: '/icon-48.png',
+        64: '/icon.png',
+        128: '/icon-128.png',
+      },
+      ...(isFirefox
+        ? {
+            browser_specific_settings: {
+              gecko: {
+                id: 'feedsieve@chendahuang.com',
+                // Firefox 140 起原生展示数据传输同意；项目设置内仍可随时关闭名单上传。
+                strict_min_version: '140.0',
+                data_collection_permissions: {
+                  required: ['personallyIdentifyingInfo', 'websiteActivity', 'websiteContent'],
+                },
+              },
+            },
+          }
+        : {}),
+    };
+  },
   vite: (env) => ({
     plugins: [officialJsonPlugin()],
     define: {
